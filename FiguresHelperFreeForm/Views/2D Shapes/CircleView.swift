@@ -10,10 +10,43 @@ import SwiftUI
 struct CircleView: View {
     
     // MARK: Stored properties
-    @State var radius = 10.0
+    @State var providedRadius = ""
     
     // MARK: Computed properties
-    var area: Double {
+    
+    //Check the input given by the user
+    //If possible, returns a double
+    //Otherwise, returns nil
+    var radius: Double? {
+        
+        //1.Ensure that we can change the input (string) to a Double
+        //2.Ensure that the value is more than zero
+        //To do this we use a "guard" statement
+        guard let radius = Double(providedRadius),
+              radius > 0
+        else {
+            //When either of the tests above do not pass, then we don't have a valid radius
+            return nil
+            
+        }
+
+        // If we get here, we know the radius is valid
+        return radius
+        
+    }
+    
+    // Attempts to calculate the area - if it cannot, return nil
+    var area: Double? {
+        
+        // Are the input(s) valid?
+        // The "black" radius is a local condtant
+        //It only exists AFTER the guard statement
+        guard let radius = radius
+        else {
+            //Input(s) not valid, so we cannot compute the area
+            return nil
+        }
+        
         return Double.pi * radius * radius
     }
     
@@ -26,23 +59,12 @@ struct CircleView: View {
                             horizontalPadding: 50)
                 
                 SectionLabelView(text: "Radius", variable: "r")
-
-                // Input: Radius
-                Slider(value: $radius,
-                       in: 0.0...100.0,
-                       step: 0.1,
-                       label: {
-                    Text("Radius")
-                },
-                       minimumValueLabel: {
-                    Text("0")
-                },
-                       maximumValueLabel: {
-                    Text("100")
-                })
                 
-                // Output: Radius
-                SliderValueView(value: radius)
+                // Input: Radius
+                TextField("Radius",
+                          text: $providedRadius,
+                        prompt: Text("Numeric value greater than 0"))
+                
                 
                 SectionLabelView(text: "Area", variable: "")
                 
